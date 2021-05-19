@@ -12,6 +12,22 @@ int		ft_strlen(char *str)
 	return (i);
 }
 
+void	ft_free_all(FILE *file, char **tab)
+{
+	int	i;
+
+	fclose(file);
+	if (tab != NULL)
+		free(tab);
+}
+
+int	ft_error(char *message, FILE *file, char **tab)
+{
+	write(1, message, ft_strlen(message));
+	ft_free_all(file, tab);
+	return (1);
+}
+
 void	ft_print_tab(char **tab)
 {
 	int	i;
@@ -87,15 +103,6 @@ int	ft_read_rectangle(char **tab, FILE *file, int total_height, int total_width)
 	return (0);
 }
 
-void	ft_free_all(FILE *file, char **tab)
-{
-	int	i;
-
-	fclose(file);
-	if (tab != NULL)
-		free(tab);
-}
-
 int	main(int argc, char **argv)
 {
 	FILE	*file;
@@ -109,25 +116,13 @@ int	main(int argc, char **argv)
 	i = 0;
 	j = 0;
 	if (argc != 2)
-	{
-		write (1, "Error: argument\n", ft_strlen("Error: argument\n"));
-		return (1);
-	}
+		return (ft_error("Error: argument\n", file, tab));
 	if (!(file = fopen(argv[1], "r")))
-	{
-		write (1, "Error: Operation file corrupted\n", ft_strlen("Error: Operation file corrupted\n"));
-		return (1);
-	}
+		return (ft_error("Error: Operation file corrupted\n", file, tab));
 	if (fscanf(file, "%d %d %c\n", &height, &width, &fill_char) != 3)
-	{
-		write (1, "Error: Operation file corrupted\n", ft_strlen("Error: Operation file corrupted\n"));
-		return (1);
-	}
+		return (ft_error("Error: Operation file corrupted\n", file, tab));
 	if (height <= 0 || height > 300 || width <= 0 || width > 300)
-	{
-		write (1, "Error: Operation file corrupted\n", ft_strlen("Error: Operation file corrupted\n"));
-		return (1);
-	}
+		return (ft_error("Error: Operation file corrupted\n", file, tab));
 	tab = malloc(sizeof(char *) * (height + 1));
 	tab[height] = 0;
 	while (i < height)
@@ -143,10 +138,7 @@ int	main(int argc, char **argv)
 		i++;
 	}
 	if (ft_read_rectangle(tab, file, height, width) == 1)
-	{
-		write (1, "Error: Operation file corrupted\n", ft_strlen("Error: Operation file corrupted\n"));
-		return (1);
-	}
+		return (ft_error("Error: Operation file corrupted\n", file, tab));
 	ft_print_tab(tab);
 	ft_free_all(file, tab);
 	return (0);
