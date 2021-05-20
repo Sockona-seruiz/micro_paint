@@ -15,7 +15,8 @@ int		ft_strlen(char *str)
 
 void	ft_free_all(FILE *file, char **tab)
 {
-	fclose(file);
+	if (file != NULL)
+		fclose(file);
 	if (tab != NULL)
 		free(tab);
 }
