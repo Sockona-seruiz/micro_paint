@@ -14,8 +14,6 @@ int		ft_strlen(char *str)
 
 void	ft_free_all(FILE *file, char **tab)
 {
-	int	i;
-
 	fclose(file);
 	if (tab != NULL)
 		free(tab);
@@ -41,7 +39,7 @@ void	ft_print_tab(char **tab)
 	}
 }
 
-int ft_is_rec(float tile_x, float tile_y, float x, float y, float height, float width, float total_height, float total_width)
+int ft_is_rec(float tile_x, float tile_y, float x, float y, float height, float width)
 {
     float check = 1.00000000;
     if ((tile_x < x) || (x + width < tile_x) || (tile_y < y) || (y + height < tile_y))
@@ -63,7 +61,7 @@ void	ft_draw_rect(char id, float x, float y, float width, float height, char fil
 	{
 		while (j < total_width)
 		{
-			is_rec = ft_is_rec(j, i, x, y, height, width, total_height, total_width);
+			is_rec = ft_is_rec(j, i, x, y, height, width);
 			 if ((id == 'r' && is_rec == 2) || (id == 'R' && is_rec))
 				tab[i][j] = fill;
 			j++;
@@ -73,7 +71,7 @@ void	ft_draw_rect(char id, float x, float y, float width, float height, char fil
 	}
 }
 
-int	check_rect(float height, float width, char id, float x, float y, char fill)
+int	check_rect(float height, float width, char id)
 {
 	if (height <= 0.00000000 || width <= 0.00000000)
 		return (1);
@@ -94,7 +92,7 @@ int	ft_read_rectangle(char **tab, FILE *file, int total_height, int total_width)
 
 	while ((ret = fscanf(file, "%c %f %f %f %f %c\n", &id, &x, &y, &width, &height, &fill)) == 6)
 	{
-		if (check_rect(height, width, id, x, y, fill))
+		if (check_rect(height, width, id))
 			return (1);
 		ft_draw_rect(id, x, y, width, height, fill, tab, total_height, total_width);
 	}
@@ -115,11 +113,13 @@ int	main(int argc, char **argv)
 
 	i = 0;
 	j = 0;
+	file = NULL;
+	tab = NULL;
 	if (argc != 2)
 		return (ft_error("Error: argument\n", file, tab));
 	if (!(file = fopen(argv[1], "r")))
 		return (ft_error("Error: Operation file corrupted\n", file, tab));
-	if (fscanf(file, "%d %d %c\n", &height, &width, &fill_char) != 3)
+	if (fscanf(file, "%d %d %c\n", &width, &height, &fill_char) != 3)
 		return (ft_error("Error: Operation file corrupted\n", file, tab));
 	if (height <= 0 || height > 300 || width <= 0 || width > 300)
 		return (ft_error("Error: Operation file corrupted\n", file, tab));
